@@ -1,35 +1,29 @@
-"use client"
+"use client";
 import React, { useState, useCallback, useMemo } from "react";
 import {
   Upload,
   File,
   X,
-  
   Loader2,
   DollarSign,
   TrendingUp,
-
   Download,
   Eye,
   AlertCircle,
   ChevronDown,
   ChevronUp,
- 
   Activity,
   Target,
   Zap,
-  
   Search,
- 
   Users,
- 
- 
   Database,
   FileSpreadsheet,
   Brain,
   Settings,
+ 
 } from "lucide-react";
-
+ import { v4 as uuidv4 } from "uuid";
 
 interface FileObject {
   id: string;
@@ -67,7 +61,6 @@ interface ReportTemplate {
 }
 
 type UploadStatus = "idle" | "uploading" | "success" | "error";
-
 
 const REPORT_TEMPLATES: ReportTemplate[] = [
   {
@@ -166,7 +159,6 @@ const REPORT_TEMPLATES: ReportTemplate[] = [
   },
 ];
 
-
 const DynamicReportDashboard: React.FC = () => {
   const [files, setFiles] = useState<FileObject[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -181,7 +173,6 @@ const DynamicReportDashboard: React.FC = () => {
   const [showMetadata, setShowMetadata] = useState(false);
 
   const activeReport = useMemo(() => reports[activeIdx], [reports, activeIdx]);
-
 
   const detectReportType = (data: any): string => {
     const dataStr = JSON.stringify(data).toLowerCase();
@@ -280,7 +271,6 @@ const DynamicReportDashboard: React.FC = () => {
     setFiles((prev) => prev.filter((f) => f.id !== id));
   }, []);
 
-
   const generateReports = async () => {
     if (!files.length) {
       setErrorMsg("Please select at least one file");
@@ -294,7 +284,6 @@ const DynamicReportDashboard: React.FC = () => {
     const formData = new FormData();
     files.forEach((f) => formData.append("files", f.file));
 
- 
     if (selectedTemplate !== "auto") {
       formData.append("reportType", selectedTemplate);
     }
@@ -313,13 +302,13 @@ const DynamicReportDashboard: React.FC = () => {
       const data = await response.json();
 
       if (data.success && data.reports) {
-      
         const dynamicReports: DynamicReport[] = data.reports.map(
           (report: any) => ({
             ...report,
+            id: uuidv4(),
             reportType: detectReportType(report.data),
             metadata: {
-              confidence: Math.random() * 0.3 + 0.7, 
+              confidence: Math.random() * 0.3 + 0.7,
               processingTime: Math.random() * 2000 + 500,
               dataQuality: ["Excellent", "Good", "Fair"][
                 Math.floor(Math.random() * 3)
@@ -353,7 +342,6 @@ const DynamicReportDashboard: React.FC = () => {
     return suggestions;
   };
 
-
   const renderDynamicMetrics = () => {
     if (!activeReport?.summary) return null;
 
@@ -361,7 +349,6 @@ const DynamicReportDashboard: React.FC = () => {
     const summary = activeReport.summary;
     const Icon = template.icon;
 
-   
     const metrics = Object.entries(summary)
       .filter(
         ([key, value]) => typeof value === "string" || typeof value === "number"
@@ -548,7 +535,7 @@ const DynamicReportDashboard: React.FC = () => {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
             <Brain className="w-8 h-8 mr-3 text-blue-600" />
-             Report Generator
+            Report Generator
           </h1>
           <p className="text-gray-600">
             Upload any data file and get intelligent, contextual reports
@@ -655,7 +642,6 @@ const DynamicReportDashboard: React.FC = () => {
           </div>
         )}
 
-        
         <div className="mt-6 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             {status === "error" && errorMsg && (
